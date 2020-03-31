@@ -306,17 +306,17 @@ calculus::algebra_parser::unary_create_extended_function calculus::algebra_parse
 	return NULL;
 };
 
-#include "calculus_grammar.h"
+//#include "calculus_grammar.h"
 
 #pragma warning(push)
 #pragma warning(disable : 4100 4065)
-#include "calculus_grammar.c"
+//#include "calculus_grammar.c"
 #pragma warning(pop)
 
 calculus::algebraic_operator * calculus::algebra_parser::parse_to_algebra(char * psc_algebraic_string)
 {
 	calculus::algebraic_operator * palg = NULL;
-
+	/*
 	void * pParser = ParseAlloc(malloc);
 	if (pParser)
 	{
@@ -398,6 +398,6 @@ not_a_symbol:	//If we get here then this is a function/variable/constant
 		}
 		delete [] pscCurrentBuffer;
 		ParseFree(pParser,free);
-	}
+	}*/
 	return palg;
 };

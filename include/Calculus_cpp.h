@@ -101,40 +101,12 @@ THE FOLLOWING NOTICE APPLIES SOLELY TO LEMON-->
 
 */
 
-#ifndef __CALCULUS_CPP_H_INCLUDED__
-#define __CALCULUS_CPP_H_INCLUDED__
-
-#ifdef _MSC_VER
-	#pragma once
-	#ifdef _DEBUG
-		#pragma warning(disable:4127)
-	#endif
-    #pragma warning(push)
-    #pragma warning(disable:4035)
-    double __forceinline LoadPI()
-    {
-	    __asm FLDPI
-    };
-    #pragma warning(pop)
-    #include <typeinfo.h>
-    #pragma warning(disable:4189 4244)
-#else
-
-#define __cdecl
-static double LoadPI()
-{
-	return 3.1416;
-}
-#include <typeinfo>
-
-#endif
-
-#define PI LoadPI()
+#pragma once
 
 #ifndef _ASSERT
 #ifdef _MSC_VER
-    #pragma warning(disable:4127)
-    #define _ASSERT(x) if ((x)==0) { __asm INT 3 }
+	#include <Windows.h>
+    #define _ASSERT(x) if ((x)==0) { DebugBreak(); }
 #else
     #define _ASSERT(x) (x)
 #endif
@@ -145,12 +117,13 @@ static double LoadPI()
 #define UNREFERENCED_PARAMETER(x) (x);
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <cstdlib>
 #include <malloc.h>
-#include <stddef.h>
+#include <cstddef>
+#include <typeinfo>
 
 void *ParseAlloc(void *(*mallocProc)(size_t));
 
@@ -2477,4 +2450,3 @@ namespace calculus
 	}
 }
 
-#endif //__CALCULUS_CPP_H_INCLUDED__

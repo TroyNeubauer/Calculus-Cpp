@@ -96,7 +96,7 @@ THE FOLLOWING NOTICE APPLIES SOLELY TO LEMON-->
 */
 
 #include "Calculus_cpp.h"
-
+/*
 calculus::unary_operators::polynomials::CHermitePolyFunction::CHermitePolyFunction(unsigned int uiNumPoints,DATA<double,3>* pPoints) : calculus::unary_operators::polynomials::polynomial() {
 	this->m_epoly_function_type = Interpolatory;
 	this->__load_interpolant(CHermitePolyFunction::HermiteInterpolatoryCoefficientsFromPoints(uiNumPoints,pPoints));
@@ -185,3 +185,4 @@ calculus::DATA<double,2> *calculus::unary_operators::polynomials::CHermitePolyFu
 
 	return destPTR;
 }
+*/

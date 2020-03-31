@@ -10,7 +10,9 @@ project "Calculus-Cpp"
 
 	excludes
 	{
-		"src/Samples/**"
+		"src/Samples/**",
+		"src/Compiler/**",
+		"src/Lemon/**",
 	}
 
 	includedirs

@@ -105,12 +105,12 @@ THE FOLLOWING NOTICE APPLIES SOLELY TO LEMON-->
 <--END NOTICE
 
 */
+#pragma once
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
-#ifdef __cplusplus
 
 #include <iostream>
 #include <Calculus_cpp.h>
@@ -442,4 +442,3 @@ inline std::istream& operator>>(std::istream &s, user_algebraic_operator & arg) 
     return s;
 }
 
-#endif //__cplusplus
