@@ -26,5 +26,4 @@ build/
 #Android
 **/.modules/
 **/*.gradle
-**/CMakeLists.txt
 **/.idea
