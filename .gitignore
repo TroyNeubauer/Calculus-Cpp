@@ -1,8 +1,6 @@
-# Directories
 
-**/bin/
-!vendor/bin/
-**/bin-int/
+#CMake
+build/
 
 #Visual Studio
 **/.vs/
