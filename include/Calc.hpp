@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <type_traits>
+#include <vector>
 
 namespace calc {
 
@@ -19,25 +20,33 @@ namespace calc {
 	};
 
 	template<typename T>
-	using BinaryEvaluateFunc = std::add_pointer_t<T(const Atom<T>&, const Atom<T>&)>;
+	using OperationParameters = std::vector<std::unique_ptr<Atom<T>>>;
 
 	template<typename T>
-	struct BinaryOperation
+	struct GeneralOperation
 	{
-		BinaryEvaluateFunc<T> Evaluate;
+		std::add_pointer_t<T(const OperationParameters<T>&)> Evaluate;
 	};
+
+
+
 
 	namespace operations
 	{
 		namespace internal
 		{
-			template<typename T>
-			T AddImpl(const Atom<T>& a, const Atom<T>& b) { return a.Get() + b.Get(); }
+			
+			template<typename T> T AddImpl(const OperationParameters<T>& params) 		{ return params[0]->Get() + params[1]->Get(); }
+			template<typename T> T SubtractImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() - params[1]->Get(); }
+			template<typename T> T MultiplyImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() * params[1]->Get(); }
+			template<typename T> T DivideImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() / params[1]->Get(); }
 
 		}
 
-		template<typename T>
-		BinaryOperation<T> Add = { internal::AddImpl };
+		template<typename T> GeneralOperation<T> Add = { internal::AddImpl };
+		template<typename T> GeneralOperation<T> Subtract = { internal::SubtractImpl };
+		template<typename T> GeneralOperation<T> Multiply = { internal::MultiplyImpl };
+		template<typename T> GeneralOperation<T> Divide = { internal::DivideImpl };
 	}
 
 
@@ -72,24 +81,31 @@ namespace calc {
 
 
 	template<typename T>
-	class BinaryOperationAtom : public Atom<T>
+	class OperationAtom : public Atom<T>
 	{
+		using Operation = GeneralOperation<T>;
 	//The same as ConstantAtom, users simply construct this atom with the value they need. Actual variables will come in time
 	public:
 
-		BinaryOperationAtom(const BinaryOperation<T>& operation, std::unique_ptr<Atom<T>>&& a, std::unique_ptr<Atom<T>>&& b)
-			: m_Operation(operation), m_A(a), m_B(b) {}
-
-		BinaryOperationAtom(const BinaryOperation<T>& operation, Atom<T>* a, Atom<T>* b)
-			: m_Operation(operation), m_A(a), m_B(b) {}
+		OperationAtom(const Operation& operation, OperationParameters<T>&& args)
+			: m_Operation(operation), m_Args(args) {}
 
 
-		virtual T Get() const { return m_Operation.Evaluate(*m_A.get(), *m_B.get()); };
+		OperationAtom(const Operation& operation, const std::initializer_list<Atom<T>*>& args)
+			: m_Operation(operation)
+		{
+			m_Args.reserve(args.size());
+			for (const auto& arg : args)
+			{
+				m_Args.emplace_back(arg);
+			}
+		}
+
+		virtual T Get() const { return 0.0; } // m_Operation.Evaluate(*m_A.get(), *m_B.get())
 
 	private:
-		const BinaryOperation<T>& m_Operation;
-		std::unique_ptr<Atom<T>> m_A;
-		std::unique_ptr<Atom<T>> m_B;
+		const Operation& m_Operation;
+		OperationParameters<T> m_Args;
 	};
 
 
@@ -97,10 +113,8 @@ namespace calc {
 	using DAtom = Atom<double>;
 	using DConstantAtom = ConstantAtom<double>;
 	using DVariableAtom = VariableAtom<double>;
-	using DBinaryOperationAtom = BinaryOperationAtom<double>;
+	using DOperationAtom = OperationAtom<double>;
 
-	using DBinaryEvaluateFunc = BinaryEvaluateFunc<double>;
-	using DBinaryOperation = BinaryOperation<double>;
 
 
 }

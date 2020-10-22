@@ -6,8 +6,48 @@
 	],
 	"settings": {
 		"files.associations": {
-			"type_traits": "cpp"
+			"type_traits": "cpp",
+			"*.tcc": "cpp",
+			"cctype": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"memory_resource": "cpp",
+			"sstream": "cpp",
+			"locale": "cpp",
+			"optional": "cpp",
+			"streambuf": "cpp"
 		},
 		"editor.insertSpaces": false
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+
+			{
+				"name": "Quickstart Debug",
+				"type": "cppdbg",
+				"request": "launch",
+				"program": "${fileDirname}/build/examples/quickstart/quickstart",
+				"args": [],
+				"stopAtEntry": true,
+				"cwd": "${workspaceFolder}",
+				"environment": [],
+				"externalConsole": false,
+				"MIMode": "gdb",
+				"setupCommands": [
+					{
+						"description": "Enable pretty-printing for gdb",
+						"text": "-enable-pretty-printing",
+						"ignoreFailures": true
+					}
+				]
+			}
+		]
 	}
 }
