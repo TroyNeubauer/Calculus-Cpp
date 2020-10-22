@@ -4,7 +4,7 @@ add_library(calculuscpp lib.cpp ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too
 target_include_directories(calculuscpp PUBLIC ../include)
-target_compile_features(calculuscpp PUBLIC cxx_std_11)
+target_compile_features(calculuscpp PUBLIC cxx_std_14)
 
 
 # IDEs should put the headers in a nice place

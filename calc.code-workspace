@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"type_traits": "cpp"
+		},
+		"editor.insertSpaces": false
+	}
+}
