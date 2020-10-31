@@ -1,6 +1,3 @@
 
-
-int main(int argc, const char** argv)
-{
-
-}
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>

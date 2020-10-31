@@ -26,13 +26,14 @@ namespace calc {
 	template<typename T>
 	class ParametersBase
 	{
+	public:
 		virtual const T& operator[](std::size_t index) const = 0;
 
 		//Returns the first operand
-		virtual const T& A() = 0;
+		virtual const T& A() const = 0;
 
-			//Returns the second operand
-		virtual const T& B() = 0;
+		//Returns the second operand
+		virtual const T& B() const = 0;
 	};
 
 
@@ -40,20 +41,19 @@ namespace calc {
 	class VectorParameters : public ParametersBase<T>
 	{
 	public:
-
 		const T& operator[](std::size_t index) const
 		{
 			return m_Params[index];
 		}
 
 		//Returns the first operand
-		const T& A()
+		virtual const T& A() const
 		{
 			return m_Params.Get(0);
 		}
 
 		//Returns the second operand
-		const T& B()
+		virtual const T& B() const
 		{
 			return m_Params.Get(0);
 		}
@@ -139,11 +139,7 @@ namespace calc {
 		OperationAtom(const Operation& operation, const std::initializer_list<Atom<T>*>& args)
 			: m_Operation(operation)
 		{
-			m_Args.reserve(args.size());
-			for (const auto& arg : args)
-			{
-				m_Args.emplace_back(arg);
-			}
+			//TODO
 		}
 
 		virtual T Get() const { return 0.0; } // m_Operation.Evaluate(*m_A.get(), *m_B.get())
