@@ -3,6 +3,9 @@
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <cassert>
+
+#include "DataStructures.hpp"
 
 namespace calc {
 
@@ -19,28 +22,70 @@ namespace calc {
 		virtual T Get() const = 0;
 	};
 
+
 	template<typename T>
-	using OperationParameters = std::vector<std::unique_ptr<Atom<T>>>;
+	class ParametersBase
+	{
+		virtual const T& operator[](std::size_t index) const = 0;
+
+		//Returns the first operand
+		virtual const T& A() = 0;
+
+			//Returns the second operand
+		virtual const T& B() = 0;
+	};
+
+
+	template<typename T, typename VecType>
+	class VectorParameters : public ParametersBase<T>
+	{
+	public:
+
+		const T& operator[](std::size_t index) const
+		{
+			return m_Params[index];
+		}
+
+		//Returns the first operand
+		const T& A()
+		{
+			return m_Params.Get(0);
+		}
+
+		//Returns the second operand
+		const T& B()
+		{
+			return m_Params.Get(0);
+		}
+
+	private:
+		VecType m_Params;
+	};
+
+
+	template<typename T, std::size_t SIZE>
+	using OwnedParameters = VectorParameters<T, SmallVector<T, SIZE>>;
+
+	//2 in 1 out normal binary opperation (addition, mutplication, etc.)
+	//is also enough for unary operations like sin(), sqrt(), tan() ect
+	template<typename T>
+	using DefaultParameters = OwnedParameters<T, 2>;
 
 	template<typename T>
 	struct GeneralOperation
 	{
-		std::add_pointer_t<T(const OperationParameters<T>&)> Evaluate;
+		std::add_pointer_t<T(const ParametersBase<T>&)> Evaluate;
 	};
-
-
 
 
 	namespace operations
 	{
 		namespace internal
 		{
-			
-			template<typename T> T AddImpl(const OperationParameters<T>& params) 		{ return params[0]->Get() + params[1]->Get(); }
-			template<typename T> T SubtractImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() - params[1]->Get(); }
-			template<typename T> T MultiplyImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() * params[1]->Get(); }
-			template<typename T> T DivideImpl(const OperationParameters<T>& params) 	{ return params[0]->Get() / params[1]->Get(); }
-
+			template<typename T> T AddImpl(const ParametersBase<T>& params) 		{ return params.A() + params.B(); }
+			template<typename T> T SubtractImpl(const ParametersBase<T>& params) 	{ return params.A() - params.B(); }
+			template<typename T> T MultiplyImpl(const ParametersBase<T>& params) 	{ return params.A() * params.B(); }
+			template<typename T> T DivideImpl(const ParametersBase<T>& params) 		{ return params.A() / params.B(); }
 		}
 
 		template<typename T> GeneralOperation<T> Add = { internal::AddImpl };
@@ -87,8 +132,8 @@ namespace calc {
 	//The same as ConstantAtom, users simply construct this atom with the value they need. Actual variables will come in time
 	public:
 
-		OperationAtom(const Operation& operation, OperationParameters<T>&& args)
-			: m_Operation(operation), m_Args(args) {}
+		OperationAtom(const Operation& operation, DefaultParameters<T>&& args)
+			: m_Operation(operation), m_Args(std::move(args)) {}
 
 
 		OperationAtom(const Operation& operation, const std::initializer_list<Atom<T>*>& args)
@@ -105,16 +150,8 @@ namespace calc {
 
 	private:
 		const Operation& m_Operation;
-		OperationParameters<T> m_Args;
+		DefaultParameters<T> m_Args;
 	};
-
-
-
-	using DAtom = Atom<double>;
-	using DConstantAtom = ConstantAtom<double>;
-	using DVariableAtom = VariableAtom<double>;
-	using DOperationAtom = OperationAtom<double>;
-
 
 
 }
