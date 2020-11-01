@@ -15,25 +15,25 @@ namespace calc {
 		T& Get(std::size_t index);
 		const T& Get(std::size_t index) const;
 
-		T& operator[](std::size_t index) { return Get(index); }
-		const T& operator[](std::size_t index) const { return Get(index); }
+		T& operator[](std::size_t index) { return this->Get(index); }
+		const T& operator[](std::size_t index) const { return this->Get(index); }
 
-		inline std::size_t Size() const { return m_End - m_Begin; }
+		inline std::size_t Size() const { return this->m_End - this->m_Begin; }
 
-		inline T* Data() { return m_Begin; }
-		inline const T* Data() const { return m_Data; }
+		inline T* Data() { return this->m_Begin; }
+		inline const T* Data() const { return this->m_Begin; }
 
-		inline T* Begin() { return m_Begin; }
-		inline const T* Begin() const { return m_Data; }
+		inline T* Begin() { return this->m_Begin; }
+		inline const T* Begin() const { return this->m_Begin; }
 
-		inline T* End() { return m_End; }
-		inline const T* End() const { return m_End; }
+		inline T* End() { return this->m_End; }
+		inline const T* End() const { return this->m_End; }
 
-		inline T* begin() { return m_Begin; }
-		inline const T* begin() const { return m_Data; }
+		inline T* begin() { return this->m_Begin; }
+		inline const T* begin() const { return this->m_Begin; }
 
-		inline T* end() { return m_End; }
-		inline const T* end() const { return m_End; }
+		inline T* end() { return this->m_End; }
+		inline const T* end() const { return this->m_End; }
 
 		virtual ~Buffer() {}
 
@@ -50,13 +50,13 @@ namespace calc {
 	{
 	protected:
 		//Only called internally when we know we are about to assign these pointers anyway
-		explicit Vector() : Buffer(nullptr, nullptr), m_Capacity(nullptr) {}
+		explicit Vector();
 
 	public:
 		Vector(T* begin, T* end, T* capacity);
-		inline Vector(T* begin, T* end);
+		Vector(T* begin, T* end);
 
-		std::size_t Capacity() const { return m_Capacity - m_Begin; }
+		inline std::size_t Capacity() const { return this->m_Capacity - this->m_Begin; }
 
 		virtual void Reserve(std::size_t minCapacity) = 0;
 
@@ -81,20 +81,20 @@ namespace calc {
 	{
 	public:
 		SmallVector();
-		inline SmallVector(std::initializer_list<T> list) { CopyFrom(list.begin(), list.end()); }
+		inline SmallVector(std::initializer_list<T> list);
 
-		virtual void Reserve(std::size_t minCapacity);
+		virtual void Reserve(std::size_t minCapacity) override;
 
-		virtual void CopyFrom(const T* begin, const T* end);
+		virtual void CopyFrom(const T* begin, const T* end) override;
 
-		virtual T& Add(const T& value);
-		virtual T& Add(T&& value);
+		virtual T& Add(const T& value) override;
+		virtual T& Add(T&& value) override;
 
 		virtual ~SmallVector();
 
 
 	private:
-		inline bool IsSmall() const { return m_Begin == m_Store; }
+		inline bool IsSmall() const { return this->m_Begin == this->m_Store; }
 
 	private:
 		T m_Store[SIZE];

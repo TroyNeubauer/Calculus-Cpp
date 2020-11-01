@@ -127,7 +127,7 @@ TEST_CASE("Buffer iterators #1", "[buffer]")
 
 }
 
-
+/*
 TEST_CASE("Buffer doesnt destruct elements", "[buffer]")
 {
 
@@ -160,7 +160,7 @@ TEST_CASE("Buffer doesnt destruct elements", "[buffer]")
 	}
 
 }
-
+*/
 
 
 TEST_CASE("Const correctness #1", "[vector]")

@@ -1,34 +1,30 @@
-#include "DataStructures.hpp"
-#pragma once
-
-
 
 namespace calc
 {
 	template<typename T>
-	inline Buffer<T>::Buffer(T* begin, T* end)
+	Buffer<T>::Buffer(T* begin, T* end)
 		: m_Begin(begin), m_End(end)
 	{
 	}
 
 	template<typename T>
-	inline T& Buffer<T>::Get(std::size_t index)
+	T& Buffer<T>::Get(std::size_t index)
 	{
-		CheckRange(index);
-		return m_Begin[index];
+		this->CheckRange(index);
+		return this->m_Begin[index];
 	}
 
 	template<typename T>
-	inline const T& Buffer<T>::Get(std::size_t index) const
+	const T& Buffer<T>::Get(std::size_t index) const
 	{
-		CheckRange(index);
-		return m_Begin[index];
+		this->CheckRange(index);
+		return this->m_Begin[index];
 	}
 
 	template<typename T>
-	inline void Buffer<T>::CheckRange(std::size_t triedIndex) const
+	void Buffer<T>::CheckRange(std::size_t triedIndex) const
 	{
-		if (triedIndex >= Size())
+		if (triedIndex >= this->Size())
 		{
 			throw "Element out of range!";
 		}
@@ -36,65 +32,80 @@ namespace calc
 
 
 	template<typename T>
-	inline Vector<T>::Vector(T* data, T* capacity)
-		: Buffer(data, data), m_Capacity(capacity)
+	Vector<T>::Vector()
+		: Buffer<T>(nullptr, nullptr), m_Capacity(nullptr)
+	{
+	}
+
+
+	template<typename T>
+	Vector<T>::Vector(T* data, T* capacity)
+		: Buffer<T>(data, data), m_Capacity(capacity)
 	{
 	}
 
 	template<typename T>
-	inline void Vector<T>::Remove(std::size_t index)
+	void Vector<T>::Remove(std::size_t index)
 	{
-		CheckRange(index);
-		T* toRemove = Begin() + index;
+		this->CheckRange(index);
+		T* toRemove = this->Begin() + index;
 		//(*toRemove)~();
 
-		std::copy(toRemove + 1, End(), toRemove);
-		m_End--;
+		std::copy(toRemove + 1, this->End(), toRemove);
+		this->m_End--;
 	}
 
 
 	template<typename T>
-	inline void Vector<T>::Clear()
+	void Vector<T>::Clear()
 	{
-		const T* const end = End();
-		for (T* current = Begin(); current != end; current++)
+		const T* const end = this->End();
+		for (T* current = this->Begin(); current != end; current++)
 		{
 			current->~T();
 		}
 
-		m_End = m_Begin;
+		this->m_End = this->m_Begin;
 	}
 
 
 	template<typename T, std::size_t SIZE>
-	inline SmallVector<T, SIZE>::SmallVector()
-		: Vector(m_Store, m_Store + SIZE)
+	SmallVector<T, SIZE>::SmallVector()
+		: Vector<T>(m_Store, m_Store + SIZE)
 	{
 	}
 
 	template<typename T, std::size_t SIZE>
-	inline void SmallVector<T, SIZE>::Reserve(std::size_t minCapacity)
+	SmallVector<T, SIZE>::SmallVector(std::initializer_list<T> list)
+		: Vector<T>()
 	{
-		if (minCapacity > Capacity())
+		CopyFrom(list.begin(), list.end());
+	}
+
+	template<typename T, std::size_t SIZE>
+	void SmallVector<T, SIZE>::Reserve(std::size_t minCapacity)
+	{
+		if (minCapacity > this->Capacity())
 		{
-			if (IsSmall())
+			if (this->IsSmall())
 			{
 				//Move from internal buffer to the heap
-				T* oldBegin = m_Begin;
-				T* oldEnd = m_End;
-				T* oldCap = m_Capacity;
+				T* oldBegin = this->m_Begin;
+				T* oldEnd = this->m_End;
+				T* oldCap = this->m_Capacity;
 				std::size_t size = oldEnd - oldBegin;
+
 				if (minCapacity < SIZE * 2)
 				{
 					//In case we're growing by 1 element above what the internal capacity can hold, allocate a bit more storage
 					//to avoid having to copy when the next element is added
 					minCapacity = SIZE * 2;
 				}
-				m_Begin = new T[minCapacity];
-				m_End = m_Begin + size;
-				m_Capacity = m_Begin + minCapacity;
+				this->m_Begin = new T[minCapacity];
+				this->m_End = this->m_Begin + size;
+				this->m_Capacity = this->m_Begin + minCapacity;
 
-				for (T *old = oldBegin, *current = m_Begin; current != m_End; old++, current++)
+				for (T *old = oldBegin, *current = this->m_Begin; current != this->m_End; old++, current++)
 				{
 					//Move construct new values
 					new (current) T(std::move(*old));
@@ -105,44 +116,45 @@ namespace calc
 
 
 	template<typename T, std::size_t SIZE>
-	inline void SmallVector<T, SIZE>::CopyFrom(const T* begin, const T* end)
+	void SmallVector<T, SIZE>::CopyFrom(const T* begin, const T* end)
 	{
-		Clear();
 		std::size_t newSize = end - begin;
-		Reserve(newSize);
-		std::copy(begin, end, m_Begin);
-		m_End = m_Begin + newSize;
+		this->Clear();
+		this->Reserve(newSize);
+
+		std::copy(begin, end, this->m_Begin);
+		this->m_End = this->m_Begin + newSize;
 	}
 
 	template<typename T, std::size_t SIZE>
-	inline T& SmallVector<T, SIZE>::Add(const T& value)
+	T& SmallVector<T, SIZE>::Add(const T& value)
 	{
-		Reserve(Size() + 1);
-		T* newElem = m_End;
+		this->Reserve(this->Size() + 1);
+		T* newElem = this->m_End;
 
 		return *newElem;
 	}
 	
 	
 	template<typename T, std::size_t SIZE>
-	inline T& SmallVector<T, SIZE>::Add(T&& value)
+	T& SmallVector<T, SIZE>::Add(T&& value)
 	{
-		Reserve(Size() + 1);
-		T* newElem = m_End;
+		this->Reserve(this->Size() + 1);
+		T* newElem = this->m_End;
 
 		return *newElem;
 	}
 
 
 	template<typename T, std::size_t SIZE>
-	inline SmallVector<T, SIZE>::~SmallVector()
+	SmallVector<T, SIZE>::~SmallVector()
 	{
-		if (m_Begin != m_Store)
+		if (this->m_Begin != this->m_Store)
 		{
 			//Clear again here because otherwise the elements will be deconstructed after the memory is freed
 			//Clear will be called again in Vector::~Vector but this will be cheap because the size will already be 0
-			Clear();
-			delete[] m_Begin;
+			this->Clear();
+			delete[] this->m_Begin;
 		}
 	}
 
