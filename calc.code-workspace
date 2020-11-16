@@ -94,33 +94,13 @@
 			"__tuple": "cpp",
 			"ios": "cpp",
 			"queue": "cpp",
-			"stack": "cpp"
+			"stack": "cpp",
+			"filesystem": "cpp",
+			"__functional_03": "cpp",
+			"__functional_base_03": "cpp",
+			"__memory": "cpp",
+			"*.inc": "cpp"
 		},
 		"editor.insertSpaces": false
 	},
-	"launch": {
-		"version": "0.2.0",
-		"configurations": [
-
-			{
-				"name": "Quickstart Debug",
-				"type": "cppdbg",
-				"request": "launch",
-				"program": "${fileDirname}/build/examples/quickstart/quickstart",
-				"args": [],
-				"stopAtEntry": true,
-				"cwd": "${workspaceFolder}",
-				"environment": [],
-				"externalConsole": false,
-				"MIMode": "gdb",
-				"setupCommands": [
-					{
-						"description": "Enable pretty-printing for gdb",
-						"text": "-enable-pretty-printing",
-						"ignoreFailures": true
-					}
-				]
-			}
-		]
-	}
 }

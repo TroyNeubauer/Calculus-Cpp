@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace calc {
 
@@ -48,9 +49,6 @@ namespace calc {
 	template<typename T>
 	class Vector : public Buffer<T>
 	{
-	protected:
-		//Only called internally when we know we are about to assign these pointers anyway
-		explicit Vector();
 
 	public:
 		Vector(T* begin, T* end, T* capacity);
@@ -61,6 +59,8 @@ namespace calc {
 		virtual void Reserve(std::size_t minCapacity) = 0;
 
 		virtual void CopyFrom(const T* begin, const T* end) = 0;
+
+		virtual void MoveFrom(T* begin, T* end) = 0;
 
 		virtual T& Add(const T& value) = 0;
 		virtual T& Add(T&& value) = 0;
@@ -86,6 +86,8 @@ namespace calc {
 		virtual void Reserve(std::size_t minCapacity) override;
 
 		virtual void CopyFrom(const T* begin, const T* end) override;
+
+		virtual void MoveFrom(T* begin, T* end) override;
 
 		virtual T& Add(const T& value) override;
 		virtual T& Add(T&& value) override;

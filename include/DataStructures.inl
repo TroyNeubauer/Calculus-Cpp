@@ -32,13 +32,6 @@ namespace calc
 
 
 	template<typename T>
-	Vector<T>::Vector()
-		: Buffer<T>(nullptr, nullptr), m_Capacity(nullptr)
-	{
-	}
-
-
-	template<typename T>
 	Vector<T>::Vector(T* data, T* capacity)
 		: Buffer<T>(data, data), m_Capacity(capacity)
 	{
@@ -48,10 +41,15 @@ namespace calc
 	void Vector<T>::Remove(std::size_t index)
 	{
 		this->CheckRange(index);
-		T* toRemove = this->Begin() + index;
-		//(*toRemove)~();
+		T* begin = this->Begin();
+		T* toRemove = begin + index;
+		toRemove->~T();
 
-		std::copy(toRemove + 1, this->End(), toRemove);
+		//Shift objects back
+		for (std::size_t i = index; i < this->Size() - 1; i++)
+		{
+			new(begin + i) T(std::move(begin[i + 1]));
+		}
 		this->m_End--;
 	}
 
@@ -77,7 +75,7 @@ namespace calc
 
 	template<typename T, std::size_t SIZE>
 	SmallVector<T, SIZE>::SmallVector(std::initializer_list<T> list)
-		: Vector<T>()
+		: SmallVector<T, SIZE>()
 	{
 		CopyFrom(list.begin(), list.end());
 	}
@@ -118,11 +116,30 @@ namespace calc
 	template<typename T, std::size_t SIZE>
 	void SmallVector<T, SIZE>::CopyFrom(const T* begin, const T* end)
 	{
+/*
 		std::size_t newSize = end - begin;
 		this->Clear();
 		this->Reserve(newSize);
 
 		std::copy(begin, end, this->m_Begin);
+		this->m_End = this->m_Begin + newSize;
+*/
+	}
+
+	template<typename T, std::size_t SIZE>
+	void SmallVector<T, SIZE>::MoveFrom(T* begin, T* end)
+	{
+		std::size_t newSize = end - begin;
+		this->Clear();
+		this->Reserve(newSize);
+		
+		for (T* current = this->m_Begin; current != this->m_End; current++)
+		{
+			//Move construct new values
+			new (current) T(std::move(*begin));
+			begin++;
+		}
+
 		this->m_End = this->m_Begin + newSize;
 	}
 
@@ -141,6 +158,9 @@ namespace calc
 	{
 		this->Reserve(this->Size() + 1);
 		T* newElem = this->m_End;
+
+		new(newElem) T(std::move(value));
+		this->m_End++;
 
 		return *newElem;
 	}

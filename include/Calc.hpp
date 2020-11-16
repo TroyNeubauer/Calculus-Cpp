@@ -5,7 +5,7 @@
 #include <vector>
 #include <cassert>
 
-#include "DataStructures.hpp"
+//#include "DataStructures.hpp"
 
 namespace calc {
 
@@ -20,6 +20,8 @@ namespace calc {
 
 		//Returns the value of this atom
 		virtual T Get() const = 0;
+
+		virtual ~Atom() {}
 	};
 
 
@@ -27,13 +29,14 @@ namespace calc {
 	class ParametersBase
 	{
 	public:
-		virtual const T& operator[](std::size_t index) const = 0;
+		virtual T operator[](std::size_t index) const = 0;
 
 		//Returns the first operand
-		virtual const T& A() const = 0;
+		virtual T A() const = 0;
 
 		//Returns the second operand
-		virtual const T& B() const = 0;
+		virtual T B() const = 0;
+
 	};
 
 
@@ -41,22 +44,25 @@ namespace calc {
 	class VectorParameters : public ParametersBase<T>
 	{
 	public:
-		const T& operator[](std::size_t index) const
+		virtual T operator[](std::size_t index) const
 		{
-			return m_Params[index];
+			return m_Params[index]->Get();
 		}
 
 		//Returns the first operand
-		virtual const T& A() const
+		virtual T A() const
 		{
-			return m_Params.Get(0);
+			return m_Params[0]->Get();
 		}
 
 		//Returns the second operand
-		virtual const T& B() const
+		virtual T B() const
 		{
-			return m_Params.Get(0);
+			return m_Params[1]->Get();
 		}
+
+	public:
+		VecType& GetImpl() { return m_Params; }
 
 	private:
 		VecType m_Params;
@@ -64,7 +70,7 @@ namespace calc {
 
 
 	template<typename T, std::size_t SIZE>
-	using OwnedParameters = VectorParameters<T, SmallVector<T, SIZE>>;
+	using OwnedParameters = VectorParameters<T, std::vector<std::unique_ptr<Atom<T>>>>;
 
 	//2 in 1 out normal binary opperation (addition, mutplication, etc.)
 	//is also enough for unary operations like sin(), sqrt(), tan() ect
@@ -139,15 +145,17 @@ namespace calc {
 		OperationAtom(const Operation& operation, const std::initializer_list<Atom<T>*>& args)
 			: m_Operation(operation)
 		{
-			//TODO
+			for (Atom<T>* arg : args)
+			{
+				m_Args.GetImpl().emplace_back(arg);
+			}
 		}
 
-		virtual T Get() const { return 0.0; } // m_Operation.Evaluate(*m_A.get(), *m_B.get())
+		virtual T Get() const { return m_Operation.Evaluate(m_Args); }
 
 	private:
 		const Operation& m_Operation;
 		DefaultParameters<T> m_Args;
 	};
-
 
 }

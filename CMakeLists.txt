@@ -14,6 +14,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(src)

@@ -124,11 +124,11 @@ TEST_CASE("Buffer iterators #1", "[buffer]")
 	{
 		REQUIRE(value == data[i++]);
 	}
-
+	constexpr bool tr = std::is_trivially_copy_constructible<double>::value;
 }
 
 /*
-TEST_CASE("Buffer doesnt destruct elements", "[buffer]")
+TEST_CASE("Buffer doesn't destruct elements", "[buffer]")
 {
 
 	struct DestructChecker
@@ -175,5 +175,93 @@ TEST_CASE("Const correctness #1", "[vector]")
 
 }
 
+TEST_CASE("Can remove elements in a vector #1", "[vector]")
+{
+	SmallVector<int, 4> vec({ 5 });
 
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec.Size() == 1);
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 0);
+}
+
+TEST_CASE("Can remove elements in a vector #2", "[vector]")
+{
+	SmallVector<int, 4> vec({ 5, 4, 3, 2, 1 });
+
+	REQUIRE(vec.Size() == 5);
+
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 4);
+	REQUIRE(vec[0] == 4);
+	REQUIRE(vec[1] == 3);
+	REQUIRE(vec[2] == 2);
+	REQUIRE(vec[3] == 1);
+
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 3);
+	REQUIRE(vec[0] == 3);
+	REQUIRE(vec[1] == 2);
+	REQUIRE(vec[2] == 1);
+
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 2);
+	REQUIRE(vec[0] == 2);
+	REQUIRE(vec[1] == 1);
+
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 1);
+	REQUIRE(vec[0] == 1);
+
+	vec.Remove(0);
+	REQUIRE(vec.Size() == 0);
+}
+
+TEST_CASE("Can add elements to a vector #1", "[vector]")
+{
+	SmallVector<int, 4> vec;
+
+	REQUIRE(vec.Size() == 0);
+
+	vec.Add(1);
+	REQUIRE(vec.Size() == 1);
+	REQUIRE(vec[0] == 1);
+
+}
+
+
+TEST_CASE("Can add elements to a vector #2", "[vector]")
+{
+	SmallVector<int, 2> vec;
+
+	vec.Add(5);
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec.Size() == 1);
+
+	vec.Add(4);
+	REQUIRE(vec.Size() == 2);
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec[1] == 4);
+
+	vec.Add(3);
+	REQUIRE(vec.Size() == 3);
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec[1] == 4);
+	REQUIRE(vec[2] == 3);
+
+	vec.Add(2);
+	REQUIRE(vec.Size() == 4);
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec[1] == 4);
+	REQUIRE(vec[2] == 3);
+	REQUIRE(vec[3] == 2);
+
+	vec.Add(1);
+	REQUIRE(vec.Size() == 5);
+	REQUIRE(vec[0] == 5);
+	REQUIRE(vec[1] == 4);
+	REQUIRE(vec[2] == 3);
+	REQUIRE(vec[3] == 2);
+	REQUIRE(vec[4] == 1);
+}
 
