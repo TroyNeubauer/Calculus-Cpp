@@ -1,6 +1,7 @@
 
 #CMake
 build/
+CMakeLists.txt.user
 
 #Visual Studio
 **/.vs/

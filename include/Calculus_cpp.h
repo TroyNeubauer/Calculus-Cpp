@@ -1040,7 +1040,7 @@ namespace calculus
 	protected :
 		virtual void to_IA32_binary(PCT_INFO pInfo);
 		virtual void annotate(PPT_INFO pParseInfo);
-		virtual algebraic_operator* partial_derivative(variable * pVar);
+        virtual algebraic_operator* partial_derivative(variable * pVar);
 		virtual double eval(double* pVars);
 	public :
 		char * get_variable_name() { return this->m_scVarName; };

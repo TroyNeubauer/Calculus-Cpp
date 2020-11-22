@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <vector>
 #include <cassert>
+#include <cmath>
 
 //#include "DataStructures.hpp"
 
@@ -81,7 +82,7 @@ namespace calc {
 	struct GeneralOperation
 	{
 		std::add_pointer_t<T(const ParametersBase<T>&)> Evaluate;
-	};
+    };
 
 
 	namespace operations
@@ -92,13 +93,24 @@ namespace calc {
 			template<typename T> T SubtractImpl(const ParametersBase<T>& params) 	{ return params.A() - params.B(); }
 			template<typename T> T MultiplyImpl(const ParametersBase<T>& params) 	{ return params.A() * params.B(); }
 			template<typename T> T DivideImpl(const ParametersBase<T>& params) 		{ return params.A() / params.B(); }
-		}
+
+
+            template<typename T> T SinImpl(const ParametersBase<T>& params) 		{ return std::sin(params.A()); }
+            template<typename T> T CosImpl(const ParametersBase<T>& params) 		{ return std::cos(params.A()); }
+            template<typename T> T TanImpl(const ParametersBase<T>& params) 		{ return std::tan(params.A()); }
+
+        }
 
 		template<typename T> GeneralOperation<T> Add = { internal::AddImpl };
 		template<typename T> GeneralOperation<T> Subtract = { internal::SubtractImpl };
 		template<typename T> GeneralOperation<T> Multiply = { internal::MultiplyImpl };
 		template<typename T> GeneralOperation<T> Divide = { internal::DivideImpl };
-	}
+
+        template<typename T> GeneralOperation<T> Sin = { internal::SinImpl };
+        template<typename T> GeneralOperation<T> Cos = { internal::CosImpl };
+        template<typename T> GeneralOperation<T> Tan = { internal::TanImpl };
+
+    }
 
 
 
