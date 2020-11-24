@@ -251,7 +251,7 @@ namespace calc {
     template<typename T>
     Atom<T>* Parse(std::string_view expression, ParseErrorInfo& errorInfo)
     {
-        internal::WorkingString str(expression.begin(), expression.end());
+        internal::WorkingString str(expression.data(), expression.data() + expression.size());
 
         return internal::ParseSummands<T>(str, errorInfo);
     }

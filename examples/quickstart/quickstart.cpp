@@ -3,6 +3,7 @@
 #include "parser/Parser.hpp"
 
 #include <iostream>
+#include <string>
 
 
 using namespace calc;
